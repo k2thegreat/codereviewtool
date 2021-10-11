@@ -1,5 +1,7 @@
 package com.codereviewtool.controller;
 
+import java.net.URISyntaxException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codereviewtool.repo.ItemRepository;
 import com.codereviewtool.repo.model.items;
+import com.codereviewtool.service.BatchProcessor;
 
 @RestController
 @RequestMapping("/groceryItems")
@@ -16,8 +19,20 @@ public class SearchController {
 
     @Autowired
     ItemRepository groceryItemRepo;
+
+    @Autowired
+    BatchProcessor batchProcessor;
+
     @GetMapping(value = "/search/{name}")
     public String search(@PathVariable("name") String name) {
+
+        if(batchProcessor != null){
+            try {
+                batchProcessor.processDetails();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
         return groceryItemRepo.findItemByName(name).toString();
     }
 
