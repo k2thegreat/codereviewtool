@@ -3,19 +3,22 @@ package com.codereviewtool.controller;
 import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codereviewtool.controller.response.Root;
 import com.codereviewtool.repo.ItemRepository;
 import com.codereviewtool.repo.model.items;
 import com.codereviewtool.service.BatchProcessor;
 
 @RestController
-@RequestMapping("/groceryItems")
-public class SearchController {
+@RequestMapping("/suggestions")
+public class SuggestionsController {
 
     @Autowired
     ItemRepository groceryItemRepo;
@@ -23,17 +26,10 @@ public class SearchController {
     @Autowired
     BatchProcessor batchProcessor;
 
-    @GetMapping(value = "/search/{name}")
-    public String search(@PathVariable("name") String name) {
+    @GetMapping(value = "",produces = MediaType.APPLICATION_JSON_VALUE)
+    public Root search(@RequestParam(value = "url",required = true) String url) {
 
-        if(batchProcessor != null){
-            try {
-                batchProcessor.processDetails();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        }
-        return groceryItemRepo.findItemByName(name).toString();
+        return new Root();
     }
 
     @PostMapping(value = "/createsample")
