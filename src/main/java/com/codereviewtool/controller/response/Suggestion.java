@@ -2,12 +2,10 @@ package com.codereviewtool.controller.response;
 
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class Suggestion{
-    public String type;
-    public List<Review> reviews;
+    private String type;
+    private List<Review> reviews;
 }
