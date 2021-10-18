@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codereviewtool.controller.response.Root;
 import com.codereviewtool.controller.response.Suggestion;
-import com.codereviewtool.repo.ItemRepository;
 import com.codereviewtool.service.BatchProcessor;
 import com.codereviewtool.service.BitbucketService;
+import com.codereviewtool.service.SuggestionsService;
 
 @RestController
 @RequestMapping("/suggestions")
 public class SuggestionsController {
 
-    @Autowired
-    ItemRepository groceryItemRepo;
+    /*@Autowired
+    ItemRepository groceryItemRepo;*/
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -35,10 +35,13 @@ public class SuggestionsController {
     @Autowired
     BitbucketService bitbucketService;
 
-    @GetMapping(value = "",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Root getSuggestionsByPullRequest(@RequestParam(value = "url",required = true) String url) {
+    @Autowired
+    private SuggestionsService suggestionsService;
 
-        return new Root();
+    @GetMapping(value = "",produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<com.codereviewtool.repo.model.Suggestion> getSuggestionsByPullRequest(@RequestParam(value = "url",required = true) String url) {
+
+        return suggestionsService.getSuggestionsForPullRequest(url);
     }
 
     @GetMapping(value = "/{type}",produces = MediaType.APPLICATION_JSON_VALUE)
