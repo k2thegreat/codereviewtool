@@ -46,7 +46,7 @@ public class SuggestionsController {
 
         Suggestion suggestion = new Suggestion();
         suggestion.setType(type);
-        suggestion.setReviews(new ArrayList<>());
+        suggestion.setComments(new ArrayList<>());
         Root root = new Root();
         List<Suggestion> suggestions = new ArrayList();
         suggestions.add(suggestion);

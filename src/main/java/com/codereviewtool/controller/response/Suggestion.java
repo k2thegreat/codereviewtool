@@ -2,10 +2,21 @@ package com.codereviewtool.controller.response;
 
 import java.util.List;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Data
-public class Suggestion{
-    private String type;
-    private List<Review> reviews;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Suggestion {
+  public String type;
+  public List<Comment> comments;
+  public String fileName;
+  public String codeSnippet;
+  public String reviewer;
+  public String pullRequestLink;
+  public String date;
+  public Props props;
 }
