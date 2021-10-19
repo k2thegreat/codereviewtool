@@ -4,6 +4,7 @@ import { reviewService } from '../services/reviewService'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
+import { toast } from 'react-toastify'
 
 export const columns = [
     {
@@ -213,7 +214,11 @@ export const Reviews = () => {
     const [data, setData] = React.useState()
 
     React.useEffect(() => {
-        reviewService().getAllReviews().then(({ data }) => {
+        toast.promise(reviewService().getAllReviews, {
+            pending: 'Fetching review data',
+            success: 'Fetched successfully 👌',
+            error: 'Error while fetching 🤯'
+        }).then(({ data }) => {
             setData(transformData(data))
         })
     }, [])

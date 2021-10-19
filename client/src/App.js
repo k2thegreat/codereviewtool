@@ -10,6 +10,8 @@ import {
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.min.css'
 
 const Main = styled.main`
   display: flex;
@@ -73,6 +75,7 @@ function App() {
     <Main>
       <Router>
         <Nav>
+          <ToastContainer position={toast.POSITION.TOP_CENTER} autoClose={550} />
           <ul>
             <li>
               <Link to="/dashboard"><FontAwesomeIcon color="#90e0ef" icon={faChartBar} size="lg" /> &nbsp; Dashboard</Link>

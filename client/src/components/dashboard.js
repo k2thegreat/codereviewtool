@@ -7,6 +7,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { Styles, Table, columns, transformData } from './reviews'
 import { TypesChart } from './typesChart'
+import { toast } from 'react-toastify'
 
 const sliderSettings = {
     dots: true,
@@ -48,7 +49,11 @@ export const Dashboard = props => {
     const [data, setData] = React.useState()
 
     React.useEffect(() => {
-        reviewService().getFileTypes().then(({ data }) => {
+        toast.promise(reviewService().getFileTypes, {
+            pending: 'Fetching file types',
+            success: 'Fetched successfully 👌',
+            error: 'Error while fetching 🤯'
+        }).then(({ data }) => {
             const fileTypes = Object.keys(data).reduce((acc, type) => {
                 if (data[type] < 1) {
                     return acc
@@ -62,7 +67,11 @@ export const Dashboard = props => {
     }, [])
 
     const setReviewData = fileType => {
-        reviewService().getReviews(fileType).then(({ data }) => {
+        toast.promise(reviewService().getReviews(fileType), {
+            pending: 'Updating table',
+            success: 'Table updated 👌',
+            error: 'Error while updating 🤯'
+        }).then(({ data }) => {
             setData(transformData(data))
         })
     }
@@ -78,7 +87,7 @@ export const Dashboard = props => {
             })}
         </Slider>}
         <div className="content">
-            {data && <Styles offset={400}>
+            {data && <Styles offset={250}>
                 <Table columns={columns} data={data} />
             </Styles>}
             {fileTypes.length > 0 && <TypesChart data={fileTypes.reduce((acc, { type, count }) => {
