@@ -71,14 +71,27 @@ const reviews = [
     }
 ]
 
+const fileTypes = [{type: 'UI_CONTROL', count: 10000}, {type: 'UI_FORM', count: 153000}, {type: 'UI_SCREEN', count: 122343}, {type: 'END_POINT', count: 12345}]
+
 const reviewsCopy = [...reviews, ...reviews]
 
 export const reviewService = () => {
-    const getReviews = () => {
+    const getAllReviews = () => {
         return Promise.resolve(reviewsCopy)
     }
 
+    const getFileTypes = () => {
+        return Promise.resolve(fileTypes)
+    }
+
+    const getReviews = fileType => {
+        const reviews = reviewsCopy.filter(({ type }) => fileType === type)
+        return Promise.resolve(reviews)
+    }
+
     return {
-        getReviews
+        getReviews,
+        getFileTypes,
+        getAllReviews,
     }
 }

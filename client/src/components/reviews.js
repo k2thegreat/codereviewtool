@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 
-const columns = [
+export const columns = [
     {
     id: 'expander',
     Cell: ({ row }) =>
@@ -47,7 +47,7 @@ const columns = [
     },
 ]
 
-const Styles = styled.div`
+export const Styles = styled.div`
 padding: 20px;
 
 table {
@@ -76,6 +76,10 @@ table {
         :last-child {
             border-right: 0;
         }
+    }
+
+    td {
+        background-color: white;
     }
 
     td:first-child {
@@ -107,7 +111,7 @@ table {
 }
 `
 
-function Table({ columns: userColumns, data }) {
+export function Table({ columns: userColumns, data }) {
     const {
     getTableProps,
     getTableBodyProps,
@@ -151,7 +155,7 @@ function Table({ columns: userColumns, data }) {
     )
 }
 
-const transformData = data => {
+export const transformData = data => {
     return data.map(({ type, comments, reviewer, pullRequestLink, date }) => {
         const data = { type, comment: comments[0].comment, author: comments[0].author === 'reviewer' ? reviewer : 'author', reviewer, pullRequestLink, date: new Date(+date).toLocaleDateString() }
         if (comments.length > 1) {
@@ -165,11 +169,11 @@ const transformData = data => {
     })
 }
 
-export const Reviews = props => {
+export const Reviews = () => {
     const [data, setData] = React.useState()
 
     React.useEffect(() => {
-        reviewService().getReviews().then(data => {
+        reviewService().getAllReviews().then(data => {
             setData(transformData(data))
         })
     }, [])

@@ -8,6 +8,8 @@ import {
   Link
 } from "react-router-dom";
 import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChartBar, faUsers } from '@fortawesome/free-solid-svg-icons'
 
 const Main = styled.main`
   display: flex;
@@ -23,11 +25,17 @@ const Nav = styled.nav`
   ul {
     padding-left: 0;
     list-style: none;
+    margin-top: 50px;
 
     li {
       height: 30px;
       padding-left: 30px;
       transition: background-color 0.2s ease-in-out;
+
+      svg {
+        transition: color 0.2s ease-in-out;
+      }
+
       a {
         display: inline-block;
         width: 100%;
@@ -39,7 +47,7 @@ const Nav = styled.nav`
 
       &:hover {
         background-color: #00b4d8;
-        a {
+        a, svg {
           color: white;
         }
       }
@@ -60,10 +68,10 @@ function App() {
         <Nav>
           <ul>
             <li>
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/dashboard"><FontAwesomeIcon color="#90e0ef" icon={faChartBar} size="lg" /> &nbsp; Dashboard</Link>
             </li>
             <li>
-              <Link to="/reviews">Reviews</Link>
+              <Link to="/reviews"><FontAwesomeIcon color="#90e0ef" icon={faUsers} size="lg" /> &nbsp; Reviews</Link>
             </li>
           </ul>
         </Nav>
