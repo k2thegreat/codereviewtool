@@ -2,6 +2,7 @@ package com.codereviewtool.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -45,16 +46,15 @@ public class SuggestionsController {
     }
 
     @GetMapping(value = "/{type}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Root getSuggestionsByType(@PathVariable(value = "type",required = true) String type) {
+    public List<com.codereviewtool.repo.model.Suggestion> getSuggestionsByType(@PathVariable(value = "type",required = true) String type) {
 
-        Suggestion suggestion = new Suggestion();
-        suggestion.setType(type);
-        suggestion.setComments(new ArrayList<>());
-        Root root = new Root();
-        List<Suggestion> suggestions = new ArrayList();
-        suggestions.add(suggestion);
-        root.setSuggestions(suggestions);
-        return root;
+        return suggestionsService.getSuggestionsByType(type);
+    }
+
+    @GetMapping(value = "/allTypes",produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String,Integer> getSuggestionsByType() {
+
+        return suggestionsService.getSuggestionsCountByType();
     }
 
     @GetMapping(value = "/bitbucket", produces = MediaType.APPLICATION_JSON_VALUE)
