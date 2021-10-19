@@ -47,36 +47,42 @@ padding: 30px;
 
 export const Dashboard = props => {
     const [fileTypes, setFileTypes] = React.useState([])
-    const [selectedType, setSelectedType] = React.useState()
     const [data, setData] = React.useState()
 
     React.useEffect(() => {
-        reviewService().getFileTypes().then(fileTypes => {
+        reviewService().getFileTypes().then(({ data }) => {
+            const fileTypes = Object.keys(data).reduce((acc, type) => {
+                if (data[type] < 1) {
+                    return acc
+                }
+                acc.push({ type, count: data[type] })
+                return acc
+            }, [])
             setFileTypes(fileTypes)
-            setSelectedType(fileTypes[0].type)
+            setReviewData(fileTypes[0].type)
         })
     }, [])
 
-    React.useEffect(() => {
-        reviewService().getReviews(selectedType).then(data => {
+    const setReviewData = fileType => {
+        reviewService().getReviews(fileType).then(({ data }) => {
             setData(transformData(data))
         })
-    }, [selectedType])
+    }
 
     const handleCardSelect = fileType => {
-        setSelectedType(fileType)
+        setReviewData(fileType)
     }
 
     return <Wrapper>
-        <Slider {...sliderSettings}>
+        {fileTypes.length > 0 && <Slider {...sliderSettings}>
             {fileTypes.map(({ type, count }) => {
                 return <StyledCard key={type} fileType={type} count={count} onSelect={handleCardSelect} />
             })}
-        </Slider>
+        </Slider>}
         <div className="content">
-            <Styles>
-                {data && <Table columns={columns} data={data} />}
-            </Styles>
+            {data && <Styles offset={400}>
+                <Table columns={columns} data={data} />
+            </Styles>}
             {fileTypes.length > 0 && <TypesChart data={fileTypes.reduce((acc, { type, count }) => {
                 const data = [type, count]
                 acc.push(data)

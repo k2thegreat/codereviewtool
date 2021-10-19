@@ -47,6 +47,8 @@ export const columns = [
     },
 ]
 
+const getHeight = offset => `calc(100vh - ${offset}px)`
+
 export const Styles = styled.div`
 padding: 20px;
 
@@ -89,7 +91,7 @@ padding: 20px;
 table {
     display: inline-block;
     max-width: 100%;
-    max-height: 100%;
+    max-height: ${({ offset }) => getHeight(offset)};
     border-spacing: 0;
     border: 1px solid #00b4d8;
     border-radius: 4px;
@@ -211,12 +213,12 @@ export const Reviews = () => {
     const [data, setData] = React.useState()
 
     React.useEffect(() => {
-        reviewService().getAllReviews().then(data => {
+        reviewService().getAllReviews().then(({ data }) => {
             setData(transformData(data))
         })
     }, [])
 
-    return <Styles>
+    return <Styles offset={100}>
         <div class="input">
             <label class="prlink">Enter PR link: <input value="https://wfrbitbucket.int.kronos.com/projects/WFR/repos/zeyt/pull-requests/60982/overview" /></label>
             <button class="go">Go</button>

@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const BASE_URL = '/codereviewtool/suggestions'
+
 const reviews = [
     {
         "type": "UI_CONTROL",
@@ -71,22 +73,25 @@ const reviews = [
     }
 ]
 
-const fileTypes = [{type: 'UI_CONTROL', count: 10000}, {type: 'UI_FORM', count: 153000}, {type: 'UI_SCREEN', count: 122343}, {type: 'END_POINT', count: 12345}]
+const fileTypes = {'UI_CONTROL': 10000, 'UI_FORM': 153000, 'UI_SCREEN': 122343, 'END_POINT': 12345}
 
 const reviewsCopy = [...reviews, ...reviews]
 
 export const reviewService = () => {
-    const getAllReviews = () => {
-        return Promise.resolve(reviewsCopy)
+    const getAllReviews = prLink => {
+        return axios.get(`${BASE_URL}?url=https://wfrbitbucket.int.kronos.com/projects/WFR/repos/zeyt/pull-requests/59896/overview`)
+        // return Promise.resolve({data: reviewsCopy})
     }
 
     const getFileTypes = () => {
-        return Promise.resolve(fileTypes)
+        return axios.get(`${BASE_URL}/allTypes`)
+        // return Promise.resolve({data: fileTypes})
     }
 
     const getReviews = fileType => {
-        const reviews = reviewsCopy.filter(({ type }) => fileType === type)
-        return Promise.resolve(reviews)
+        return axios.get(`${BASE_URL}/${fileType}`)
+        // const reviews = reviewsCopy.filter(({ type }) => fileType === type)
+        // return Promise.resolve({data: reviews})
     }
 
     return {
