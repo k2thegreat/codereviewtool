@@ -13,4 +13,7 @@ public interface SuggestionRepository extends MongoRepository<Suggestion, String
     @Query("{type:'?0'}")
     List<Suggestion> findSuggestionByType(String type);
 
+//    @Query(value = "{'Suggestions.type': {$regex: ?0, $options: 'i'}, 'sourceDescriptor': ?1}", count = true)
+    List<Suggestion> findByType(String type);
+
 }
