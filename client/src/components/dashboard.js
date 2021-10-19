@@ -12,8 +12,6 @@ const sliderSettings = {
     dots: true,
     infinite: true,
     speed: 600,
-    slidesToShow: 4,
-    slidesToScroll: 4,
 }
 
 const Wrapper = styled.div`
@@ -74,7 +72,7 @@ export const Dashboard = props => {
     }
 
     return <Wrapper>
-        {fileTypes.length > 0 && <Slider {...sliderSettings}>
+        {fileTypes.length > 0 && <Slider {...sliderSettings} slidesToShow={Math.min(4, fileTypes.length)} slidesToScroll={Math.min(4, fileTypes.length)} >
             {fileTypes.map(({ type, count }) => {
                 return <StyledCard key={type} fileType={type} count={count} onSelect={handleCardSelect} />
             })}
