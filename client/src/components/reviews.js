@@ -72,25 +72,28 @@ padding: 20px;
     margin-left: 10px;
     padding: 5px;
     cursor: pointer;
-    border: 1px solid grey;
+    color: white;
+    border: 1px solid #0077b6;
+    background-color: #0077b6;
     border-radius: 6px;
     outline: none;
     transition: all 0.2s linear;
 
     &:hover, &:focus {
         color: white;
-        background-color: #0077b6;
-        border-color: #0077b6;
+        background-color: #03045e;
+        border-color: #03045e;
     }
 }
 
 table {
     display: inline-block;
     max-width: 100%;
-    max-height: calc(100vh - 60px);
+    max-height: 100%;
     border-spacing: 0;
-    border: 1px solid grey;
+    border: 1px solid #00b4d8;
     border-radius: 4px;
+    box-shadow: 2px 2px 6px 2px rgba(0, 119, 182, 0.4);
     overflow: auto;
 
     tr {
