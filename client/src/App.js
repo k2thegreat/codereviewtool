@@ -15,8 +15,11 @@ const Main = styled.main`
 `
 
 const Nav = styled.nav`
+  z-index: 1;
   width: 200px;
   background-color: #0077b6;
+  box-shadow: 2px 0 4px 1px rgba(0, 119, 182, 0.4);
+
   ul {
     padding-left: 0;
     list-style: none;

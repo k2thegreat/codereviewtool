@@ -1,6 +1,8 @@
 import styled from 'styled-components'
 import { useTable, useExpanded } from 'react-table'
 import { reviewService } from '../services/reviewService'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 
 const columns = [
@@ -15,7 +17,7 @@ const columns = [
             },
             })}
         >
-            {row.isExpanded ? '👇' : '👉'}
+            <FontAwesomeIcon className={row.isExpanded ? "m-expanded" : ""} color="black" icon={faChevronRight} />
         </span>
         ) : null,
     },
@@ -46,7 +48,7 @@ const columns = [
 ]
 
 const Styles = styled.div`
-padding: 1rem;
+padding: 20px;
 
 table {
     display: inline-block;
@@ -57,22 +59,32 @@ table {
     overflow: auto;
 
     tr {
-    :last-child {
-        td {
-        border-bottom: 0;
+        &:last-child {
+            td {
+                border-bottom: 0;
+            }
         }
-    }
     }
 
     th,
     td {
-    margin: 0;
-    padding: 0.5rem;
-    border-bottom: 1px solid black;
-    border-right: 1px solid black;
+        margin: 0;
+        padding: 10px;
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
 
         :last-child {
             border-right: 0;
+        }
+    }
+
+    td:first-child {
+        svg {
+            transition: transform 0.2s linear;
+
+            &.m-expanded {
+                transform: rotate(90deg)
+            }
         }
     }
 
@@ -163,7 +175,6 @@ export const Reviews = props => {
     }, [])
 
     return <Styles>
-        Reviews
         {data && <Table columns={columns} data={data} />}
     </Styles>
 }
