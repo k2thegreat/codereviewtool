@@ -17,6 +17,13 @@ const sliderSettings = {
 
 const Wrapper = styled.div`
 padding: 30px;
+
+.slick-arrow {
+    &::before {
+        color: #0077b6;
+        transition: opacity 0.2s linear;
+    }
+}
 `
 
 export const Dashboard = props => {

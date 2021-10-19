@@ -28,8 +28,9 @@ const Nav = styled.nav`
     margin-top: 50px;
 
     li {
-      height: 30px;
-      padding-left: 30px;
+      height: 32px;
+      padding-left: 20px;
+      padding-right: 20px;
       transition: background-color 0.2s ease-in-out;
 
       svg {
@@ -39,10 +40,16 @@ const Nav = styled.nav`
       a {
         display: inline-block;
         width: 100%;
+        padding: 5px;
         color: #90e0ef;
+        outline: none;
         text-decoration: none;
         vertical-align: middle;
         transition: color 0.2s ease-in-out;
+
+        &:focus {
+          outline: 1px solid #90e0ef;
+        }
       }
 
       &:hover {

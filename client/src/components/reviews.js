@@ -50,12 +50,47 @@ export const columns = [
 export const Styles = styled.div`
 padding: 20px;
 
+.input {
+    margin-bottom: 15px;
+}
+
+.prlink {
+    input {
+        width: 250px;
+        padding: 5px;
+        border: 1px solid grey;
+        border-radius: 6px;
+        outline: none;
+
+        &:focus {
+            border-color: #00b4d8;
+        }
+    }
+}
+
+.go {
+    margin-left: 10px;
+    padding: 5px;
+    cursor: pointer;
+    border: 1px solid grey;
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.2s linear;
+
+    &:hover, &:focus {
+        color: white;
+        background-color: #0077b6;
+        border-color: #0077b6;
+    }
+}
+
 table {
     display: inline-block;
     max-width: 100%;
     max-height: calc(100vh - 60px);
     border-spacing: 0;
-    border: 1px solid black;
+    border: 1px solid grey;
+    border-radius: 4px;
     overflow: auto;
 
     tr {
@@ -70,8 +105,8 @@ table {
     td {
         margin: 0;
         padding: 10px;
-        border-bottom: 1px solid black;
-        border-right: 1px solid black;
+        border-bottom: 1px solid grey;
+        border-right: 1px solid grey;
 
         :last-child {
             border-right: 0;
@@ -179,6 +214,10 @@ export const Reviews = () => {
     }, [])
 
     return <Styles>
+        <div class="input">
+            <label class="prlink">Enter PR link: <input value="https://wfrbitbucket.int.kronos.com/projects/WFR/repos/zeyt/pull-requests/60982/overview" /></label>
+            <button class="go">Go</button>
+        </div>
         {data && <Table columns={columns} data={data} />}
     </Styles>
 }
