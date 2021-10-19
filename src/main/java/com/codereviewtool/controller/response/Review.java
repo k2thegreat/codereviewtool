@@ -1,13 +1,11 @@
 package com.codereviewtool.controller.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class Review{
-    public String comment;
-    public String reviewer;
-    public String pull_request_link;
-    public Props props;
+    private String comment;
+    private String reviewer;
+    private String pull_request_link;
+    private Props props;
 }

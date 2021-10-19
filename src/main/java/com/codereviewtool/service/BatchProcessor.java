@@ -24,14 +24,14 @@ public class BatchProcessor {
     private String bitbucketAllReposPath;
 
     @Value("${codereviewtool.bitbucket.authorization}")
-    private String bitbucketAuthorizaation;
+    private String bitbucketAuthorization;
 
     public void processDetails() throws URISyntaxException {
 
-        if (!StringUtil.isEmpty(bitbucketAllReposPath) && !StringUtil.isEmpty(bitbucketAuthorizaation)) {
+        if (!StringUtil.isEmpty(bitbucketAllReposPath) && !StringUtil.isEmpty(bitbucketAuthorization)) {
             URI uri = new URI(bitbucketAllReposPath);
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", bitbucketAuthorizaation);
+            headers.set("Authorization", bitbucketAuthorization);
 
             HttpEntity requestEntity = new HttpEntity<>(null, headers);
 
