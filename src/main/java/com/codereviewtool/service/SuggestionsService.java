@@ -8,6 +8,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.codereviewtool.repo.SuggestionRepository;
@@ -22,40 +25,44 @@ public class SuggestionsService {
     @Autowired
     private BitbucketService bitbucketService;
 
-    public List<Suggestion> getSuggestionsForPullRequest(String url){
+    public List<Suggestion> getSuggestionsForPullRequest(String url,String page,String size) {
         List<Suggestion> suggestionsList = new ArrayList();
         Optional<Set<String>> fileTypes = bitbucketService.getFileTypes(url);
-        if(fileTypes.isPresent()){
-            fileTypes.get().forEach(type -> suggestionsList.addAll(suggestionRepository.findSuggestionByType(type)));
+        Pageable pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
+        if (fileTypes.isPresent()) {
+            fileTypes.get().forEach(type -> suggestionsList.addAll(suggestionRepository.findSuggestionByType(type, pageable).getContent()));
         }
         return suggestionsList;
     }
 
-    public List<Suggestion> getSuggestionsByType(String type) {
+    public List<Suggestion> getSuggestionsByType(String type,String page,String size) {
         List<Suggestion> suggestionsList = new ArrayList();
-        suggestionsList.addAll(suggestionRepository.findSuggestionByType(type));
+        Pageable pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
+        suggestionsList.addAll(suggestionRepository.findSuggestionByType(type,pageable).getContent());
         return suggestionsList;
     }
 
-    public Map<String,Integer> getSuggestionsCountByType() {
-        Map<String, Integer> countMap = new HashMap<String, Integer>() {{
-            put("UI_FORM", 0);
-            put("UI_CONTROL", 0);
-            put("HOME", 0);
-            put("XML", 0);
-            put("END_POINT", 0);
-            put("SERVICE", 0);
-            put("UTIL", 0);
-            put("JS", 0);
-            put("JSON", 0);
-            put("CSS", 0);
-            put("HTML", 0);
-            put("OTHERS", 0);
+    public Map<String, Long> getSuggestionsCountByType() {
+        Map<String, Long> countMap = new HashMap<String, Long>() {{
+            put("UI_FORM", 0L);
+            put("UI_CONTROL", 0L);
+            put("HOME", 0L);
+            put("XML", 0L);
+            put("END_POINT", 0L);
+            put("SERVICE", 0L);
+            put("UTIL", 0L);
+            put("JS", 0L);
+            put("JSON", 0L);
+            put("CSS", 0L);
+            put("HTML", 0L);
+            put("OTHERS", 0L);
         }};
         for (String type : countMap.keySet()) {
-            List<Suggestion> suggestions = suggestionRepository.findSuggestionByType(type);
-            if (suggestions != null && suggestions.size() > 0) {
-                countMap.put(type, suggestions.size());
+            Pageable pageable = PageRequest.of(1, 1);
+            Page<Suggestion> pageSuggestion = suggestionRepository.findSuggestionByType(type, pageable);
+            List<Suggestion> suggestions = pageSuggestion.getContent();
+            if (suggestions != null && pageSuggestion.getTotalElements() > 0) {
+                countMap.put(type, pageSuggestion.getTotalElements());
             }
         }
         return countMap;

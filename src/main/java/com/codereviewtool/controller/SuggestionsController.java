@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import com.codereviewtool.service.SuggestionsService;
 
 @RestController
 @RequestMapping("/suggestions")
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 100000)
 public class SuggestionsController {
 
     /*@Autowired
@@ -40,19 +42,19 @@ public class SuggestionsController {
     private SuggestionsService suggestionsService;
 
     @GetMapping(value = "",produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<com.codereviewtool.repo.model.Suggestion> getSuggestionsByPullRequest(@RequestParam(value = "url",required = true) String url) {
+    public List<com.codereviewtool.repo.model.Suggestion> getSuggestionsByPullRequest(@RequestParam(value = "url",required = true) String url,@RequestParam(value = "page",required = true) String page,@RequestParam(value = "size",required = true) String size) {
 
-        return suggestionsService.getSuggestionsForPullRequest(url);
+        return suggestionsService.getSuggestionsForPullRequest(url,page,size);
     }
 
     @GetMapping(value = "/{type}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<com.codereviewtool.repo.model.Suggestion> getSuggestionsByType(@PathVariable(value = "type",required = true) String type) {
+    public List<com.codereviewtool.repo.model.Suggestion> getSuggestionsByType(@PathVariable(value = "type",required = true) String type,@RequestParam(value = "page",required = true) String page,@RequestParam(value = "size",required = true) String size) {
 
-        return suggestionsService.getSuggestionsByType(type);
+        return suggestionsService.getSuggestionsByType(type,page,size);
     }
 
-    @GetMapping(value = "/allTypes",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String,Integer> getSuggestionsByType() {
+    @GetMapping(value = "/allTypes", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Long> getSuggestionsByType() {
 
         return suggestionsService.getSuggestionsCountByType();
     }
