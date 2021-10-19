@@ -3,7 +3,7 @@ package com.codereviewtool.repo.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("items")
+/*@Document("items")
 public class items {
 
     @Id
@@ -20,4 +20,4 @@ public class items {
         this.quantity = quantity;
         this.category = category;
     }
-}
+}*/
