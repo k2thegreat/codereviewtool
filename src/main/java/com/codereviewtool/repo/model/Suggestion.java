@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+@Data
 @Document("Suggestions")
 public class Suggestion {
   @Id
