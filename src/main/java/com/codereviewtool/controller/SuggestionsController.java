@@ -61,6 +61,16 @@ public class SuggestionsController {
         return bitbucketService.getPullRequests(limit, start, slug).get();
     }
 
+  @GetMapping(value = "/bitbucket/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+  public List<com.codereviewtool.common.model.bitbucket.pullrequests.activities.Root>
+      getBitbucketPullRequestsActivities(
+          @RequestParam(value = "limit", required = true) String limit,
+          @RequestParam(value = "start", required = true) String start,
+          @RequestParam(value = "slug", required = true) String slug) {
+
+    return bitbucketService.getPullRequestsActivities(limit, start, slug).get();
+  }
+
     @PostMapping(value = "/createsample")
     public void createGroceryItems(){
             System.out.println("Data creation started...");

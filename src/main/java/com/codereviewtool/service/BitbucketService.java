@@ -25,79 +25,118 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class BitbucketService {
 
-    @Value("${codereviewtool.bitbucket.pullrequestsurl}")
-    private String pullRequestsURL;
+  @Value("${codereviewtool.bitbucket.pullrequestsurl}")
+  private String pullRequestsURL;
 
-    @Value("${codereviewtool.bitbucket.authorization}")
-    private String bitbucketAuthorization;
+  @Value("${codereviewtool.bitbucket.pullrequestactivitiesurl}")
+  private String pullRequestActivitiesURL;
 
-    @Autowired
-    private RestTemplateUtil restTemplateUtil;
+  @Value("${codereviewtool.bitbucket.authorization}")
+  private String bitbucketAuthorization;
 
-    @Autowired
-    private RestTemplate restTemplate;
+  @Autowired private RestTemplateUtil restTemplateUtil;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private RestTemplate restTemplate;
 
-    private final int YEAR_TILL_2019 = 2020;
-    private final int BITBUCKET_API_FETCH_SIZE = 100;
+  @Autowired private ObjectMapper objectMapper;
 
-    public Optional<List<Root>> getPullRequests(String limit, String start, String slug) {
-        boolean isLastPage = false;
-        int date = getYear(String.valueOf(System.currentTimeMillis()));
-        Root root = null;
-        List<Root> rootList = new ArrayList();
-        while (!isLastPage && date > YEAR_TILL_2019) {
-            String url = BitbucketUtil.setQueryParam(pullRequestsURL, "limit", limit, false);
-            url = BitbucketUtil.setQueryParam(url, "start", start, false);
-            url = BitbucketUtil.setQueryParam(url, "slug", slug, false);
+  private final int YEAR_TILL_2019 = 2020;
+  private final int BITBUCKET_API_FETCH_SIZE = 100;
 
+  public Optional<List<Root>> getPullRequests(String limit, String start, String slug) {
+    boolean isLastPage = false;
+    int date = getYear(String.valueOf(System.currentTimeMillis()));
+    Root root = null;
+    List<Root> rootList = new ArrayList();
+    while (!isLastPage && date > YEAR_TILL_2019) {
+      String url = BitbucketUtil.setQueryParam(pullRequestsURL, "limit", limit, false);
+      url = BitbucketUtil.setQueryParam(url, "start", start, false);
+      url = BitbucketUtil.setQueryParam(url, "slug", slug, false);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", bitbucketAuthorization);
-            try {
-                Optional<String> result = restTemplateUtil.getJSONResultByURL(url, headers, HttpMethod.GET, restTemplate);
-                if (result.isPresent()) {
-                    root = objectMapper.readValue(result.get(), Root.class);
-                    start = String.valueOf((Integer.valueOf(start) + BITBUCKET_API_FETCH_SIZE));
-                    if (root != null) {
-                        isLastPage = root.isLastPage();
-                        List<com.codereviewtool.common.model.bitbucket.pullrequests.Value> values = root.getValues();
-                        if(values != null && values.size() > 0){
-                            date = getYear(values.get(0).getCreatedDate());
-                        }
-                    }
-
-                    rootList.add(root);
-                }
-            } catch (URISyntaxException ex) {
-
-            } catch (JsonMappingException e) {
-                e.printStackTrace();
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", bitbucketAuthorization);
+      try {
+        Optional<String> result =
+            restTemplateUtil.getJSONResultByURL(url, headers, HttpMethod.GET, restTemplate);
+        if (result.isPresent()) {
+          root = objectMapper.readValue(result.get(), Root.class);
+          start = String.valueOf((Integer.valueOf(start) + BITBUCKET_API_FETCH_SIZE));
+          if (root != null) {
+            isLastPage = root.isLastPage();
+            List<com.codereviewtool.common.model.bitbucket.pullrequests.Value> values =
+                root.getValues();
+            if (values != null && values.size() > 0) {
+              date = getYear(values.get(0).getCreatedDate());
             }
+          }
+
+          rootList.add(root);
         }
+      } catch (URISyntaxException ex) {
 
-        return Optional.of(rootList);
+      } catch (JsonMappingException e) {
+        e.printStackTrace();
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
     }
 
-    private int getYear(String date){
-        DateFormat formatter = new SimpleDateFormat("yyyy");
+    return Optional.of(rootList);
+  }
 
-        long milliSeconds= Long.parseLong(date);
-        System.out.println(milliSeconds);
+  public Optional<List<com.codereviewtool.common.model.bitbucket.pullrequests.activities.Root>>
+      getPullRequestsActivities(String limit, String start, String slug) {
+    List<com.codereviewtool.common.model.bitbucket.pullrequests.activities.Root> rootList =
+        new ArrayList();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return Integer.valueOf(formatter.format(calendar.getTime()));
+    List<Root> roots = getPullRequests(limit, start, slug).get();
+
+    if (roots.isEmpty()) return Optional.empty();
+
+    for (Root data : roots) {
+      for (com.codereviewtool.common.model.bitbucket.pullrequests.Value value : data.getValues()) {
+        int pullRequestId = value.getId();
+        String url = pullRequestActivitiesURL.replace("REQ_ID", String.valueOf(pullRequestId));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", bitbucketAuthorization);
+        try {
+          Optional<String> result =
+              restTemplateUtil.getJSONResultByURL(url, headers, HttpMethod.GET, restTemplate);
+          if (result.isPresent()) {
+            com.codereviewtool.common.model.bitbucket.pullrequests.activities.Root root =
+                objectMapper.readValue(
+                    result.get(),
+                    com.codereviewtool.common.model.bitbucket.pullrequests.activities.Root.class);
+            if (root != null) {
+              rootList.add(root);
+            }
+          }
+
+        } catch (URISyntaxException ex) {
+
+        } catch (JsonMappingException e) {
+          e.printStackTrace();
+        } catch (JsonProcessingException e) {
+          e.printStackTrace();
+        }
+      }
     }
 
-    public static void main(String[] args) {
-        String date = "1568102544200";
+    return Optional.of(rootList);
+  }
 
-    }
+  private int getYear(String date) {
+    DateFormat formatter = new SimpleDateFormat("yyyy");
 
+    long milliSeconds = Long.parseLong(date);
+    System.out.println(milliSeconds);
 
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(milliSeconds);
+    return Integer.valueOf(formatter.format(calendar.getTime()));
+  }
+
+  public static void main(String[] args) {
+    String date = "1568102544200";
+  }
 }
