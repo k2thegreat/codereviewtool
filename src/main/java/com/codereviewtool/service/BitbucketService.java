@@ -47,7 +47,7 @@ public class BitbucketService {
 
   @Autowired private ObjectMapper objectMapper;
 
-  private final int YEAR_TILL_2019 = 2019;
+  private final int YEAR_TILL_2019 = 2020;
   private final int BITBUCKET_API_FETCH_SIZE = 100;
   private final String COMMITS = "commits";
   private final String DIFF = "diff";
@@ -118,7 +118,9 @@ public class BitbucketService {
                     result.get(),
                     com.codereviewtool.common.model.bitbucket.pullrequests.activities.Root.class);
             if (root != null) {
-              rootList.add(root);
+              if (isValid(root)) {
+                rootList.add(root);
+              }
             }
           }
 
@@ -133,6 +135,12 @@ public class BitbucketService {
     }
 
     return Optional.of(rootList);
+  }
+
+  private boolean isValid(
+      com.codereviewtool.common.model.bitbucket.pullrequests.activities.Root root) {
+    return root.getValues().stream()
+        .anyMatch(value -> value.action.equals("COMMENTED") && value.commentAction.equals("ADDED"));
   }
 
   public Optional<Set<String>> getFileTypes(String pullRequestsURL) {
