@@ -4,6 +4,7 @@ import { NotFound } from './components/notFound';
 import {
   BrowserRouter as Router,
   Switch,
+  Redirect,
   Route,
   Link
 } from "react-router-dom";
@@ -88,7 +89,7 @@ function App() {
         <Section>
           <Switch>
             <Route exact path="/">
-              <Dashboard />
+              <Redirect to="/dashboard" />
             </Route>
             <Route path="/dashboard">
               <Dashboard />
