@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Root{
+    public int pullRequestId;
     public int size;
     public int limit;
     public boolean isLastPage;
