@@ -5,7 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import { toast } from 'react-toastify'
-import { prUrl } from '../constants'
+import { prUrl, syntax } from '../constants'
+import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
+import prism from 'react-syntax-highlighter/dist/esm/styles/prism/prism'
 
 export const columns = [
     {
@@ -34,6 +36,7 @@ export const columns = [
     {
         Header: 'Code Snippet',
         accessor: 'codeSnippet',
+        Cell: ({ cell: { row: { values: { type } }, value } }) => value ? <SyntaxHighlighter language={syntax[type] ?? 'java'} style={prism}>{value}</SyntaxHighlighter> : '',
     },
     {
         Header: 'Comment',

@@ -15,6 +15,13 @@ export const gradientPalette = {
     9: 'radial-gradient( circle 941px at 2.6% 6.8%,  rgba(124,74,228,0.81) 15.9%, rgba(249,208,40,0.70) 88.6% )',
 }
 
+export const syntax = {
+    JS: 'javascript',
+    HTML: 'html',
+    XML: 'xml',
+    CSS: 'css'
+}
+
 const reviews = [
     {
         "type": "UI_CONTROL",
