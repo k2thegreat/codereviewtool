@@ -47,13 +47,25 @@ padding: 30px;
 export const Dashboard = props => {
     const [fileTypes, setFileTypes] = React.useState([])
     const [data, setData] = React.useState()
+    const [selectedType, setSelectedType] = React.useState()
+    const [typesCount, setTypesCount] = React.useState()
+    const [pageCount, setPageCount] = React.useState()
+
+    const setReviewData = React.useCallback(({ fileType = selectedType, page = 0, size = 10 }) => {
+        toast.promise(reviewService().getReviews(fileType, { page, size }), {
+            pending: 'Updating table',
+            success: 'Table updated 👌',
+            error: 'Error while updating 🤯'
+        }).then(({ data }) => {
+            setPageCount(Math.ceil(typesCount[selectedType]/size))
+            setData(transformData(data))
+        })
+    }, [selectedType, typesCount])
 
     React.useEffect(() => {
-        toast.promise(reviewService().getFileTypes, {
-            pending: 'Fetching file types',
-            success: 'Fetched successfully 👌',
-            error: 'Error while fetching 🤯'
-        }).then(({ data }) => {
+        const promise = reviewService().getFileTypes()
+        .then(({ data }) => {
+            setTypesCount(data)
             const fileTypes = Object.keys(data).reduce((acc, type) => {
                 if (data[type] < 1) {
                     return acc
@@ -61,23 +73,24 @@ export const Dashboard = props => {
                 acc.push({ type, count: data[type] })
                 return acc
             }, [])
+            return fileTypes
+        })
+        .then(fileTypes => {
+            return Promise.all([Promise.resolve(fileTypes), reviewService().getReviews(fileTypes[0].type, { page: 0, size: 10 })])
+        }).then(([fileTypes, { data }]) => {
             setFileTypes(fileTypes)
-            setReviewData(fileTypes[0].type)
+            setSelectedType(fileTypes[0].type)
+            setData(transformData(data))
+        })
+        toast.promise(promise, {
+            pending: 'Fetching file types',
+            success: 'Fetched successfully 👌',
+            error: 'Error while fetching 🤯'
         })
     }, [])
 
-    const setReviewData = fileType => {
-        toast.promise(reviewService().getReviews(fileType), {
-            pending: 'Updating table',
-            success: 'Table updated 👌',
-            error: 'Error while updating 🤯'
-        }).then(({ data }) => {
-            setData(transformData(data))
-        })
-    }
-
     const handleCardSelect = fileType => {
-        setReviewData(fileType)
+        setReviewData({ fileType })
     }
 
     return <Wrapper>
@@ -87,8 +100,8 @@ export const Dashboard = props => {
             })}
         </Slider>}
         <div className="content">
-            {data && <Styles offset={250}>
-                <Table columns={columns} data={data} />
+            {data && <Styles offset={300}>
+                <Table columns={columns} data={data} fetchReviews={setReviewData} pageCount={pageCount} />
             </Styles>}
             {fileTypes.length > 0 && <TypesChart data={fileTypes.reduce((acc, { type, count }) => {
                 const data = [type, count]

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useTable, useExpanded } from 'react-table'
+import { useTable, useExpanded, usePagination } from 'react-table'
 import { reviewService } from '../services/reviewService'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
@@ -152,20 +152,37 @@ table {
 }
 `
 
-export function Table({ columns: userColumns, data }) {
+export function Table({ columns: userColumns, data, fetchReviews, pageCount: controlledPageCount }) {
     const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
+    page,
     prepareRow,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
     } = useTable(
     {
         columns: userColumns,
         data,
+        initialState: { pageIndex: 0 },
+        manualPagination: true,
+        pageCount: controlledPageCount,
     },
-    useExpanded
+    useExpanded,
+    usePagination,
     )
+
+    React.useEffect(() => {
+        fetchReviews({ page: pageIndex, size: pageSize })
+    }, [fetchReviews, pageIndex, pageSize])
 
     return (
     <>
@@ -180,7 +197,7 @@ export function Table({ columns: userColumns, data }) {
                 ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-                {rows.map((row, i) => {
+                {page.map((row, i) => {
                     prepareRow(row)
                     return (
                         <tr {...row.getRowProps()}>
@@ -192,13 +209,57 @@ export function Table({ columns: userColumns, data }) {
                 })}
             </tbody>
         </table>
+        <div className="pagination">
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+        {'<<'}
+        </button>{' '}
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+        {'<'}
+        </button>{' '}
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+        {'>'}
+        </button>{' '}
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+        {'>>'}
+        </button>{' '}
+        <span>
+            Page{' '}
+            <strong>
+                {pageIndex + 1} of {pageOptions.length}
+            </strong>{' '}
+        </span>
+        <span>
+            | Go to page:{' '}
+            <input
+            type="number"
+            defaultValue={pageIndex + 1}
+            onChange={e => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0
+                gotoPage(page)
+            }}
+            style={{ width: '100px' }}
+            />
+        </span>{' '}
+        <select
+            value={pageSize}
+            onChange={e => {
+            setPageSize(Number(e.target.value))
+            }}
+        >
+            {[10, 20, 30, 40, 50].map(pageSize => (
+            <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+            </option>
+            ))}
+        </select>
+        </div>
     </>
     )
 }
 
 export const transformData = data => {
     return data.map(({ type, comments, reviewer, pullRequestLink, date }) => {
-        const data = { type, comment: comments[0].comment, author: comments[0].author === 'reviewer' ? reviewer : 'author', reviewer, pullRequestLink, date: new Date(+date).toLocaleDateString() }
+        const data = { type, comment: comments[0]?.comment ?? '', author: comments[0]?.author === 'reviewer' ? reviewer : comments[0]?.author ?? '', reviewer, pullRequestLink, date: new Date(+date).toLocaleDateString() }
         if (comments.length > 1) {
             const commentsCopy = [...comments]
             commentsCopy.shift()
@@ -212,22 +273,23 @@ export const transformData = data => {
 
 export const Reviews = () => {
     const [data, setData] = React.useState()
+    const [prLink, setPRLink] = React.useState('https://wfrbitbucket.int.kronos.com/projects/WFR/repos/zeyt/pull-requests/60982/overview')
 
-    React.useEffect(() => {
-        toast.promise(reviewService().getAllReviews, {
+    const fetchReviews = React.useCallback(({ page = 0, size = 10 }) => {
+        toast.promise(reviewService().getAllReviews(prLink, { page, size }), {
             pending: 'Fetching review data',
             success: 'Fetched successfully 👌',
             error: 'Error while fetching 🤯'
         }).then(({ data }) => {
             setData(transformData(data))
         })
-    }, [])
+    }, [prLink])
 
     return <Styles offset={100}>
         <div class="input">
-            <label class="prlink">Enter PR link: <input value="https://wfrbitbucket.int.kronos.com/projects/WFR/repos/zeyt/pull-requests/60982/overview" /></label>
-            <button class="go">Go</button>
+            <label class="prlink">Enter PR link: <input value={prLink} onChange={e => setPRLink(e.target.value)} /></label>
+            <button class="go" onClick={() => fetchReviews({})}>Go</button>
         </div>
-        {data && <Table columns={columns} data={data} />}
+        {data && <Table columns={columns} data={data} fetchReviews={fetchReviews} />}
     </Styles>
 }
