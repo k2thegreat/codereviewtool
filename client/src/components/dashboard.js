@@ -94,8 +94,8 @@ export const Dashboard = () => {
 
     return <Wrapper>
         {fileTypes.length > 0 && <Slider {...sliderSettings} slidesToShow={Math.min(4, fileTypes.length)} slidesToScroll={Math.min(4, fileTypes.length)} >
-            {fileTypes.map(({ type, count }) => {
-                return <StyledCard key={type} fileType={type} count={count} onSelect={handleCardSelect} />
+            {fileTypes.map(({ type, count }, index) => {
+                return <StyledCard key={type} fileType={type} count={count} onSelect={handleCardSelect} gradientNum={index} />
             })}
         </Slider>}
         <div className="content">
