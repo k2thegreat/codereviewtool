@@ -312,6 +312,6 @@ export const Reviews = () => {
             <label className="pr-link">Enter PR link: <input value={prLink} onChange={e => setPRLink(e.target.value)} /></label>
             <button className="go" onClick={() => fetchReviews({})}>Go</button>
         </div>
-        {data && <Table columns={columns} data={data} fetchReviews={fetchReviews} />}
+        {data && <Table columns={columns} data={data} fetchReviews={fetchReviews} pageCount={10} />}
     </Styles>
 }

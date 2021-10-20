@@ -4,8 +4,8 @@ import { gradientPalette } from '../constants'
 const Card = ({ fileType, count, className, onSelect }) => {
     return <div className={className}>
         <div onClick={() => { onSelect(fileType) }}>
-            <h3>{fileType}</h3>
-            <h4>{count.toLocaleString()}</h4>
+            <h3>File Type: {fileType}</h3>
+            <h4>Reviews Count: {count.toLocaleString()}</h4>
         </div>
     </div>
 }
