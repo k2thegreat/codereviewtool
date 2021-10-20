@@ -28,16 +28,25 @@ export const columns = [
         accessor: 'type',
     },
     {
-        Header: 'PR Link',
-        accessor: 'pullRequestLink',
-    },
-    {
         Header: 'Reviewer',
         accessor: 'reviewer',
     },
     {
+        Header: 'Code Snippet',
+        accessor: 'codeSnippet',
+    },
+    {
         Header: 'Comment',
         accessor: 'comment',
+    },
+    {
+        Header: 'File Name',
+        accessor: 'fileName',
+    },
+    {
+        Header: 'PR Link',
+        accessor: 'pullRequestLink',
+        Cell: ({ cell: { value } }) => <a href={value} target="_blank">{value}</a>,
     },
     {
         Header: 'Author',
@@ -271,12 +280,12 @@ export function Table({ columns: userColumns, data, fetchReviews, pageCount: con
 }
 
 export const transformData = data => {
-    return data.map(({ type, comments, reviewer, pullRequestLink, date }) => {
-        const data = { type, comment: comments[0]?.comment ?? '', author: comments[0]?.author === 'reviewer' ? reviewer : comments[0]?.author ?? '', reviewer, pullRequestLink, date: new Date(+date).toLocaleDateString() }
+    return data.map(({ type, comments, fileName, reviewer, pullRequestLink, date, codeSnippet }) => {
+        const data = { type, codeSnippet, fileName, comment: comments[0]?.comment ?? '', author: comments[0]?.author === 'reviewer' ? reviewer : comments[0]?.author ?? '', reviewer, pullRequestLink, date: new Date(+date).toLocaleDateString() }
         if (comments.length > 1) {
             const commentsCopy = [...comments]
             commentsCopy.shift()
-            data.subRows = commentsCopy.map(({ comment, author }) => ({ comment, author: author === 'reviewer' ? reviewer : 'author' }))
+            data.subRows = commentsCopy.map(({ comment, author }) => ({ comment, author: author === 'reviewer' ? reviewer : comments[0]?.author ?? '' }))
         } else {
             data.subRows = undefined
         }
