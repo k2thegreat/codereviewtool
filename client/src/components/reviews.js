@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { prUrl } from '../constants'
 
 export const columns = [
     {
@@ -57,7 +58,7 @@ padding: 20px;
     margin-bottom: 15px;
 }
 
-.prlink {
+.pr-link {
     input {
         width: 250px;
         padding: 5px;
@@ -197,7 +198,7 @@ export function Table({ columns: userColumns, data, fetchReviews, pageCount: con
                 ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-                {page.map((row, i) => {
+                {page.map(row => {
                     prepareRow(row)
                     return (
                         <tr {...row.getRowProps()}>
@@ -273,7 +274,7 @@ export const transformData = data => {
 
 export const Reviews = () => {
     const [data, setData] = React.useState()
-    const [prLink, setPRLink] = React.useState('https://wfrbitbucket.int.kronos.com/projects/WFR/repos/zeyt/pull-requests/60982/overview')
+    const [prLink, setPRLink] = React.useState(prUrl)
 
     const fetchReviews = React.useCallback(({ page = 0, size = 10 }) => {
         toast.promise(reviewService().getAllReviews(prLink, { page, size }), {
@@ -286,9 +287,9 @@ export const Reviews = () => {
     }, [prLink])
 
     return <Styles offset={100}>
-        <div class="input">
-            <label class="prlink">Enter PR link: <input value={prLink} onChange={e => setPRLink(e.target.value)} /></label>
-            <button class="go" onClick={() => fetchReviews({})}>Go</button>
+        <div className="input">
+            <label className="pr-link">Enter PR link: <input value={prLink} onChange={e => setPRLink(e.target.value)} /></label>
+            <button className="go" onClick={() => fetchReviews({})}>Go</button>
         </div>
         {data && <Table columns={columns} data={data} fetchReviews={fetchReviews} />}
     </Styles>

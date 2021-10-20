@@ -44,7 +44,7 @@ padding: 30px;
 }
 `
 
-export const Dashboard = props => {
+export const Dashboard = () => {
     const [fileTypes, setFileTypes] = React.useState([])
     const [data, setData] = React.useState()
     const [selectedType, setSelectedType] = React.useState()
@@ -66,14 +66,13 @@ export const Dashboard = props => {
         const promise = reviewService().getFileTypes()
         .then(({ data }) => {
             setTypesCount(data)
-            const fileTypes = Object.keys(data).reduce((acc, type) => {
+            return Object.keys(data).reduce((acc, type) => {
                 if (data[type] < 1) {
                     return acc
                 }
                 acc.push({ type, count: data[type] })
                 return acc
             }, [])
-            return fileTypes
         })
         .then(fileTypes => {
             return Promise.all([Promise.resolve(fileTypes), reviewService().getReviews(fileTypes[0].type, { page: 0, size: 10 })])
