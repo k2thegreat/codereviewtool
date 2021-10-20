@@ -28,6 +28,7 @@ padding: 30px;
 .content {
     display: flex;
     margin-top: 15px;
+    overflow: auto;
 
     > div:first-child {
         max-width: 60%;

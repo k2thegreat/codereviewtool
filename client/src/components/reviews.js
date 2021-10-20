@@ -30,8 +30,9 @@ export const columns = [
         accessor: 'type',
     },
     {
-        Header: 'Reviewer',
-        accessor: 'reviewer',
+        Header: 'File Name',
+        accessor: 'fileName',
+        Cell: ({ cell: { value } }) => <div style={{ width: '200px', wordBreak: 'break-word' }}>{value}</div>,
     },
     {
         Header: 'Code Snippet',
@@ -41,15 +42,16 @@ export const columns = [
     {
         Header: 'Comment',
         accessor: 'comment',
-    },
-    {
-        Header: 'File Name',
-        accessor: 'fileName',
+        Cell: ({ cell: { value } }) => <div style={{ width: '300px' }}>{value}</div>,
     },
     {
         Header: 'PR Link',
         accessor: 'pullRequestLink',
-        Cell: ({ cell: { value } }) => <a href={value} target="_blank">{value}</a>,
+        Cell: ({ cell: { value } }) => <div style={{ width: '200px', wordBreak: 'break-word' }}><a href={value} target="_blank">{value}</a></div>,
+    },
+    {
+        Header: 'Reviewer',
+        accessor: 'reviewer',
     },
     {
         Header: 'Author',
