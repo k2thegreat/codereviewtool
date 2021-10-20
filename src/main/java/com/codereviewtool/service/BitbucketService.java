@@ -119,6 +119,7 @@ public class BitbucketService {
                     com.codereviewtool.common.model.bitbucket.pullrequests.activities.Root.class);
             if (root != null) {
               if (isValid(root)) {
+                root.setPullRequestId(pullRequestId);
                 rootList.add(root);
               }
             }
